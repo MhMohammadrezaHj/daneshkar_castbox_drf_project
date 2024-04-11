@@ -3,8 +3,8 @@ from rest_framework.viewsets import mixins, GenericViewSet
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from logs.models import SeenEpisode
-from logs.serializers import SeenEpisodeSerializer
+from logs.models import SeenChannel, SeenEpisode
+from logs.serializers import SeenChannelSerializer, SeenEpisodeSerializer
 
 
 class SeenEpisodeViewSet(mixins.ListModelMixin, GenericViewSet):
@@ -17,4 +17,17 @@ class SeenEpisodeViewSet(mixins.ListModelMixin, GenericViewSet):
         user_id = request.user.id
         seen_episodes = SeenEpisode.objects.filter(user_id=user_id)
         serializer = SeenEpisodeSerializer(seen_episodes, many=True)
+        return Response(serializer.data)
+
+
+class SeenChannelViewSet(mixins.ListModelMixin, GenericViewSet):
+    serializer_class = SeenChannelSerializer
+    permission_classes = [IsAdminUser]
+    queryset = SeenChannel.objects.all()
+
+    @action(detail=False, methods=["GET"], permission_classes=[IsAuthenticated])
+    def me(self, request):
+        user_id = request.user.id
+        seen_channels = SeenChannel.objects.filter(user_id=user_id)
+        serializer = SeenChannelSerializer(seen_channels, many=True)
         return Response(serializer.data)

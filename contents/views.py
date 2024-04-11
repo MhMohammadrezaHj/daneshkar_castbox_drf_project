@@ -9,7 +9,7 @@ from rest_framework.viewsets import mixins, GenericViewSet
 
 from activites.models import Comment, CommentLike, Subscription
 from activites.serializers import SubscriptionSerializer
-from logs.models import SeenEpisode
+from logs.models import SeenChannel, SeenEpisode
 from profiles.models import Channel
 
 from .models import Episode
@@ -63,6 +63,13 @@ class ChannelsViewSet(viewsets.ModelViewSet):
         serializer = SubscriptionSerializer(subscribers, many=True)
         return Response(serializer.data)
 
+    def retrieve(self, request, *args, **kwargs):
+        user_id = request.user.id
+        channel_username = self.kwargs["username"]
+        channel = get_object_or_404(Channel, username=channel_username)
+        SeenChannel.objects.create(user_id=user_id, channel_id=channel.id)
+        return super().retrieve(request, *args, **kwargs)
+
 
 class EpisodesViewSet(viewsets.ModelViewSet):
     serializer_class = EpisodeSerializer
@@ -85,8 +92,8 @@ class EpisodesViewSet(viewsets.ModelViewSet):
         if self.action in ["create"]:
             return [(permissions.IsAdminUser | IsEpisodeOwnerOrReadOnly)()]
         if self.action in ["destroy", "partial_update"]:
-            return [IsChannelOwnerOrReadOnly()]
-        return [IsChannelOwnerOrReadOnly()]
+            return [IsEpisodeOwnerOrReadOnly()]
+        return [IsEpisodeOwnerOrReadOnly()]
 
     def get_serializer_context(self):
         return {
