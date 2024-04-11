@@ -7,7 +7,7 @@ from shared.models import BaseModel
 User = get_user_model()
 
 
-class SeenEpisodes(BaseModel):
+class SeenEpisode(BaseModel):
     episode = models.ForeignKey(
         Episode, on_delete=models.CASCADE, related_name="episode_watched"
     )
@@ -16,7 +16,7 @@ class SeenEpisodes(BaseModel):
     )
 
 
-class SeenChannels(BaseModel):
+class SeenChannel(BaseModel):
     channel = models.ForeignKey(
         Channel, on_delete=models.CASCADE, related_name="channel_seens"
     )

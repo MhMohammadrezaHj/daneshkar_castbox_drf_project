@@ -9,6 +9,7 @@ from rest_framework.viewsets import mixins, GenericViewSet
 
 from activites.models import Comment, CommentLike, Subscription
 from activites.serializers import SubscriptionSerializer
+from logs.models import SeenEpisode
 from profiles.models import Channel
 
 from .models import Episode
@@ -92,6 +93,12 @@ class EpisodesViewSet(viewsets.ModelViewSet):
             "request": self.request,
             "channel_username": self.kwargs["channel_username"],
         }
+
+    def retrieve(self, request, *args, **kwargs):
+        user_id = request.user.id
+        episode_pk = self.kwargs["pk"]
+        SeenEpisode.objects.create(user_id=user_id, episode_id=episode_pk)
+        return super().retrieve(request, *args, **kwargs)
 
 
 class CommentViewSet(viewsets.ModelViewSet):

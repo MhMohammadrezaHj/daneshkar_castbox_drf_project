@@ -48,11 +48,8 @@ urlpatterns = [
                 path("auth/", include("djoser.urls.jwt")),
                 path("", include("contents.urls")),
                 path("my/", include("activites.urls")),
-                path(
-                    "swagger/schema/",
-                    schema_view.with_ui("swagger", cache_timeout=0),
-                    name="swagger-chema",
-                ),
+                path("log/", include("logs.urls")),
+                
             ]
         ),
     ),

@@ -11,7 +11,7 @@ class IsChannelOwnerOrReadOnly(BasePermission):
         if not request.user.is_authenticated:
             return False
         print("$$$", view.kwargs)
-        channel = Channel.objects.get(username=view.kwargs["username"])
+        channel = Channel.objects.get(username=view.kwargs["channel_username"])
         if request.method in permissions.SAFE_METHODS:
             return True
         if channel.user.id == request.user.id:
