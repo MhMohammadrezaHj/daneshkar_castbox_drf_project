@@ -6,6 +6,8 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.viewsets import mixins, GenericViewSet
+from rest_framework.filters import OrderingFilter, SearchFilter
+from django_filters.rest_framework import DjangoFilterBackend
 
 from activites.models import Comment, CommentLike, Subscription
 from activites.serializers import SubscriptionSerializer
@@ -31,7 +33,11 @@ from .serializers import (
 
 class ChannelsViewSet(viewsets.ModelViewSet):
     serializer_class = ChannelSerializer
-    filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
+    # filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
+    filter_backends = [SearchFilter, DjangoFilterBackend, OrderingFilter]
+    filterset_fields = ["name", "username"]
+    ordering_fields = ["username", "name", "datetime_created"]
+    search_fields = ["username", "name"]
     queryset = Channel.objects.all()
     lookup_field = "username"
     http_method_names = ["get", "post", "delete", "patch"]
