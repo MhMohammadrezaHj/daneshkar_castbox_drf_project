@@ -1,4 +1,4 @@
-from django.core.exceptions import PermissionDenied
+import django_filters
 from django.shortcuts import get_object_or_404
 from rest_framework import permissions
 from rest_framework import viewsets
@@ -6,19 +6,18 @@ from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.viewsets import mixins, GenericViewSet
-import django_filters
 
-from activites.models import Comment, CommentLike, EpisodeLike, Subscription
+from activites.models import Comment, CommentLike, Subscription
 from activites.serializers import SubscriptionSerializer
-from contents.models import Episode
-from contents.permissions import (
+from profiles.models import Channel
+
+from .models import Episode
+from .permissions import (
     IsChannelOwnerOrReadOnly,
     IsCommentLikeOwnerOrReadyOnly,
     IsCommentOwnerOrReadyOnly,
     IsEpisodeOwnerOrReadOnly,
 )
-from profiles.models import Channel
-
 from .serializers import (
     ChannelSerializer,
     CommentSerializer,
@@ -154,9 +153,7 @@ class CommentLikeViewSet(
         )
 
         if already_liked_this_comment_by_user.exists():
-            # already_liked_this_comment_by_user.delete()
             return Response({"Message": "Already liked."})
-            # return Response({"Message": "Successfully deleted your like."})
         else:
             return super().create(request, *args, **kwargs)
 
