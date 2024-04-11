@@ -49,7 +49,11 @@ urlpatterns = [
                 path("", include("contents.urls")),
                 path("my/", include("activites.urls")),
                 path("log/", include("logs.urls")),
-                
+                path(
+                    "swagger/schema/",
+                    schema_view.with_ui("swagger", cache_timeout=0),
+                    name="swagger-chema",
+                ),
             ]
         ),
     ),
